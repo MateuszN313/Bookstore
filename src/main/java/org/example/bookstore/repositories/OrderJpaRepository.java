@@ -1,4 +1,7 @@
 package org.example.bookstore.repositories;
 
-public interface OrderJpaRepository {
+import org.example.bookstore.models.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderJpaRepository extends JpaRepository<Order, String> {
 }
