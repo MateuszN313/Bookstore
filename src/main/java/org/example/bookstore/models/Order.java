@@ -3,6 +3,8 @@ package org.example.bookstore.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,20 +20,24 @@ public class Order {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "order_date", nullable = false)
     private String orderDateTime;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "order_books",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_amount_id")
+    )
+    private Set<BookAmount> books;
+
     public Order copy(){
         return Order.builder()
                 .id(id)
-                .book(book)
+                .books(books)
                 .user(user)
                 .orderDateTime(orderDateTime)
                 .build();

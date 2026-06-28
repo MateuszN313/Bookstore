@@ -37,9 +37,9 @@ public class User {
     @JoinTable(
             name = "cart",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
+            inverseJoinColumns = @JoinColumn(name = "book_amount_id")
     )
-    private Set<Book> cart;
+    private Set<BookAmount> cart;
 
     public User copy(){
         return User.builder()

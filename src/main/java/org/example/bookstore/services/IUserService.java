@@ -10,7 +10,7 @@ public interface IUserService {
 
     User findById(String id);
 
-    void deleteUser(String id, String loggedUserId);
+    void removeUser(String id, String loggedUserId);
 
     User findByLogin(String login);
 }

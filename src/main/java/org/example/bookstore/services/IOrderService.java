@@ -9,5 +9,9 @@ public interface IOrderService {
 
     List<Order> findUserOrders();
 
+    Order findById(String id);
+
     Order orderBook(String userId, String bookId);
+
+    Order orderCart(String userId);
 }
