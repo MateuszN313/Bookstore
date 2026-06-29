@@ -26,6 +26,10 @@ public class Order {
     @Column(name = "order_date", nullable = false)
     private String orderDateTime;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_books",

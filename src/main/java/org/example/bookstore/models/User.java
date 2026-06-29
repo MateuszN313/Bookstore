@@ -33,21 +33,12 @@ public class User {
     )
     private Set<Role> roles;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "cart",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_amount_id")
-    )
-    private Set<BookAmount> cart;
-
     public User copy(){
         return User.builder()
                 .id(id)
                 .login(login)
                 .passwordHash(passwordHash)
                 .roles(roles == null ? new HashSet<>() : new HashSet<>(roles))
-                .cart(cart == null ? new HashSet<>() : new HashSet<>(cart))
                 .build();
     }
 }

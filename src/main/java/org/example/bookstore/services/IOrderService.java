@@ -14,4 +14,6 @@ public interface IOrderService {
     Order orderBook(String userId, String bookId);
 
     Order orderCart(String userId);
+
+    Order changeStatus(String orderId, String status);
 }
