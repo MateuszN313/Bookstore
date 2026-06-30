@@ -20,4 +20,8 @@ public class Cart {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_amount_id", nullable = false)
+    private BookAmount bookAmount;
 }

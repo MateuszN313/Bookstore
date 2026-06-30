@@ -7,7 +7,7 @@ import java.util.List;
 public interface IOrderService {
     List<Order> findAllOrders();
 
-    List<Order> findUserOrders();
+    List<Order> findUserOrders(String userId);
 
     Order findById(String id);
 
@@ -15,5 +15,5 @@ public interface IOrderService {
 
     Order orderCart(String userId);
 
-    Order changeStatus(String orderId, String status);
+    Order changeStatus(String orderId, String statusName);
 }

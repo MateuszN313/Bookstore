@@ -1,44 +1,101 @@
 package org.example.bookstore.services.impl;
 
 import lombok.AllArgsConstructor;
-import org.example.bookstore.models.Order;
+import org.example.bookstore.models.*;
+import org.example.bookstore.repositories.*;
 import org.example.bookstore.services.IOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @Transactional
 @AllArgsConstructor
 public class OrderService implements IOrderService {
+    private final OrderJpaRepository orderRepository;
+    private final BookAmountJpaRepository bookAmountRepository;
+    private final StatusJpaRepository statusRepository;
+
+    private final UserJpaRepository userRepository;
+    private final BookJpaRepository bookRepository;
+    private final CartJpaRepository cartRepository;
+
     @Override
     public List<Order> findAllOrders() {
-        return List.of();
+        return this.orderRepository.findAll();
     }
 
     @Override
-    public List<Order> findUserOrders() {
-        return List.of();
+    public List<Order> findUserOrders(String userId) {
+        List<Order> all = this.orderRepository.findAll();
+        List<Order> user = new ArrayList<>();
+
+        for(Order order : all){
+            if(order.getUser().getId().equals(userId))
+                user.add(order);
+        }
+
+        return user;
     }
 
     @Override
     public Order findById(String id) {
-        return null;
+        return this.orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No order with such ID"));
     }
 
     @Override
     public Order orderBook(String userId, String bookId) {
-        return null;
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No user with such ID"));
+
+        Book book = this.bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("No book with such ID"));
+
+        BookAmount bookAmount = new BookAmount(UUID.randomUUID().toString(), book, 1);
+        BookAmount savedBookAmount = this.bookAmountRepository.save(bookAmount);
+
+        Status status = this.statusRepository.findByName("w_realizacji")
+                .orElseThrow(() -> new IllegalStateException("No status"));
+
+        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), status, Set.of(savedBookAmount));
+        return this.orderRepository.save(order);
     }
 
     @Override
     public Order orderCart(String userId) {
-        return null;
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No user with such ID"));
+
+        List<Cart> cart = this.cartRepository.findAllByUser_Id(userId);
+        if(cart.isEmpty())
+            throw new IllegalStateException("User has no cart");
+
+        Set<BookAmount> books = new HashSet<>();
+        for(Cart c : cart){
+            BookAmount bookAmount = this.bookAmountRepository.findById(c.getBookAmount().getId())
+                            .orElseThrow(() -> new IllegalStateException("No book data in cart"));
+            books.add(bookAmount);
+        }
+
+        Status status = this.statusRepository.findByName("w_realizacji")
+                .orElseThrow(() -> new IllegalStateException("No status"));
+
+        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), status, books);
+        return this.orderRepository.save(order);
     }
 
     @Override
-    public Order changeStatus(String orderId, String status) {
-        return null;
+    public Order changeStatus(String orderId, String statusName) {
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("No order with such ID"));
+
+        Status status = this.statusRepository.findByName(statusName)
+                .orElseThrow(() -> new IllegalArgumentException("No status with such name"));
+
+        order.setStatus(status);
+        return this.orderRepository.save(order);
     }
 }
