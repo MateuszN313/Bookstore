@@ -13,4 +13,6 @@ public interface IUserService {
     void removeUser(String id, String loggedUserId);
 
     User findByLogin(String login);
+
+    void register(String login, String password);
 }
