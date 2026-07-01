@@ -24,7 +24,7 @@ public class Book {
     private String author;
     private String category;
     private int year;
-    private int pagesNum;
+    private int pages;
 
     @Column(columnDefinition = "NUMERIC")
     private double price;
@@ -36,7 +36,7 @@ public class Book {
                 .author(author)
                 .category(category)
                 .year(year)
-                .pagesNum(pagesNum)
+                .pages(pages)
                 .price(price)
                 .build();
     }

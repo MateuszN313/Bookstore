@@ -22,4 +22,12 @@ public class BookAmount {
     private Book book;
 
     private int amount;
+
+    public BookAmount copy(){
+        return builder()
+                .id(id)
+                .book(book)
+                .amount(amount)
+                .build();
+    }
 }

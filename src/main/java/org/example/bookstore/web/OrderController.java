@@ -31,15 +31,15 @@ public class OrderController {
         return  this.orderService.findById(id);
     }
 
-    @PostMapping("book/{id}")
-    public Order orderBook(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String bookId){
+    @PostMapping("/book/{id}")
+    public Order orderBook(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String id){
         String login = userDetails.getUsername();
         User user = this.userService.findByLogin(login);
 
-        return this.orderService.orderBook(user.getId(), bookId);
+        return this.orderService.orderBook(user.getId(), id);
     }
 
-    @PostMapping
+    @PostMapping("/cart")
     public Order orderCart(@AuthenticationPrincipal UserDetails userDetails){
         String login = userDetails.getUsername();
         User user = this.userService.findByLogin(login);

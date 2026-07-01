@@ -16,7 +16,6 @@ import java.util.*;
 public class OrderService implements IOrderService {
     private final OrderJpaRepository orderRepository;
     private final BookAmountJpaRepository bookAmountRepository;
-    private final StatusJpaRepository statusRepository;
 
     private final UserJpaRepository userRepository;
     private final BookJpaRepository bookRepository;
@@ -57,10 +56,7 @@ public class OrderService implements IOrderService {
         BookAmount bookAmount = new BookAmount(UUID.randomUUID().toString(), book, 1);
         BookAmount savedBookAmount = this.bookAmountRepository.save(bookAmount);
 
-        Status status = this.statusRepository.findByName("w_realizacji")
-                .orElseThrow(() -> new IllegalStateException("No status"));
-
-        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), status, Set.of(savedBookAmount));
+        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), Status.NEW, Set.of(savedBookAmount));
         return this.orderRepository.save(order);
     }
 
@@ -78,12 +74,10 @@ public class OrderService implements IOrderService {
             BookAmount bookAmount = this.bookAmountRepository.findById(c.getBookAmount().getId())
                             .orElseThrow(() -> new IllegalStateException("No book data in cart"));
             books.add(bookAmount);
+            this.cartRepository.delete(c);
         }
 
-        Status status = this.statusRepository.findByName("w_realizacji")
-                .orElseThrow(() -> new IllegalStateException("No status"));
-
-        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), status, books);
+        Order order = new Order(UUID.randomUUID().toString(), user, LocalDateTime.now().toString(), Status.NEW, books);
         return this.orderRepository.save(order);
     }
 
@@ -92,8 +86,7 @@ public class OrderService implements IOrderService {
         Order order = this.orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("No order with such ID"));
 
-        Status status = this.statusRepository.findByName(statusName)
-                .orElseThrow(() -> new IllegalArgumentException("No status with such name"));
+        Status status = Status.valueOf(statusName);
 
         order.setStatus(status);
         return this.orderRepository.save(order);

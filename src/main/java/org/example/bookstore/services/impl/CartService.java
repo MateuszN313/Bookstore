@@ -57,27 +57,23 @@ public class CartService implements ICartService {
             return this.cartRepository.save(toSave);
         }else{
             Cart cart = opt.get();
-            BookAmount bookAmount = this.bookAmountRepository.findById(cart.getBookAmount().getId()).get();
+            BookAmount bookAmount = this.bookAmountRepository.findById(cart.getBookAmount().getId())
+                    .orElseThrow(() -> new IllegalStateException("no book data"));
             bookAmount.setAmount(amount);
             this.bookAmountRepository.save(bookAmount);
 
             return this.cartRepository.findById(cart.getId()).get();
         }
-
-
     }
 
     @Override
-    public void removeFromCart(String userId, String bookId) {
-        List<Cart> userCart = this.cartRepository.findAllByUser_Id(userId);
+    public void removeFromCart(String cartId) {
+        Cart cart = this.cartRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("no cart with such ID"));
 
-        Optional<Cart> opt = userCart.stream()
-                .filter(cart -> cart.getBookAmount().getBook().getId().equals(bookId))
-                .findFirst();
+        BookAmount bookAmount = cart.getBookAmount();
 
-        if(opt.isEmpty())
-            throw new IllegalStateException("Book is not in cart");
-
-        this.cartRepository.delete(opt.get());
+        this.cartRepository.delete(cart);
+        this.bookAmountRepository.delete(bookAmount);
     }
 }

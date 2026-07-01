@@ -24,4 +24,12 @@ public class Cart {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_amount_id", nullable = false)
     private BookAmount bookAmount;
+
+    public Cart copy(){
+        return builder()
+                .id(id)
+                .user(user)
+                .bookAmount(bookAmount)
+                .build();
+    }
 }

@@ -9,5 +9,5 @@ public interface ICartService {
 
     Cart saveCart(String userId, String bookId, int amount);
 
-    void removeFromCart(String userId, String bookId);
+    void removeFromCart(String cartId);
 }

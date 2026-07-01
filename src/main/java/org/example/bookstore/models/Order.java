@@ -3,6 +3,7 @@ package org.example.bookstore.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -26,8 +27,8 @@ public class Order {
     @Column(name = "order_date", nullable = false)
     private String orderDateTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -41,9 +42,12 @@ public class Order {
     public Order copy(){
         return Order.builder()
                 .id(id)
-                .books(books)
                 .user(user)
                 .orderDateTime(orderDateTime)
+                .status(status)
+                .books(books.isEmpty() ?
+                        new HashSet<>() :
+                        books)
                 .build();
     }
 }
