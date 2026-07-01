@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -28,6 +29,9 @@ public class BookService implements IBookService {
 
     @Override
     public Book addBook(Book book) {
+        if(book.getId() == null || book.getId().isBlank()){
+            book.setId(UUID.randomUUID().toString());
+        }
         return this.bookRepository.save(book);
     }
 
