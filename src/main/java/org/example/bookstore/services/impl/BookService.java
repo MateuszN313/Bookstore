@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BookService implements IBookService {
     private final BookJpaRepository bookRepository;
+    private final BookValidator bookValidator;
 
     @Override
     public List<Book> findAllBooks() {
@@ -29,6 +30,8 @@ public class BookService implements IBookService {
 
     @Override
     public Book addBook(Book book) {
+        this.bookValidator.validate(book);
+
         if(book.getId() == null || book.getId().isBlank()){
             book.setId(UUID.randomUUID().toString());
         }

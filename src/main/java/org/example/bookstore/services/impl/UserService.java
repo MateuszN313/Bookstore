@@ -55,16 +55,16 @@ public class UserService implements IUserService {
     @Override
     public void register(String login, String password) {
         if (login == null || login.isBlank()) {
-            throw new IllegalArgumentException("Login nie może być pusty.");
+            throw new IllegalArgumentException("Login can't be empty");
         }
         if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Hasło nie może być puste.");
+            throw new IllegalArgumentException("Password can't be empty");
         }
         if (this.userRepository.findByLogin(login).isPresent()) {
-            throw new IllegalArgumentException("Użytkownik już istnieje.");
+            throw new IllegalArgumentException("User already exists");
         }
         Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new IllegalStateException("Brak ROLE_USER."));
+                .orElseThrow(() -> new IllegalStateException("No ROLE_USER found"));
         User user = User.builder()
                 .id(UUID.randomUUID().toString())
                 .login(login)
